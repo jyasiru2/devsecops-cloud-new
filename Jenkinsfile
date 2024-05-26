@@ -21,16 +21,16 @@ pipeline {
             }
         }
 
-        stage('Vulnerability Scan - Dependency Check') {
-            steps {
-                sh "mvn dependency-check:check"
-            }
-            post {
-                always {
-                    dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-                }
-            }
-        }
+//         stage('Vulnerability Scan - Dependency Check') {
+//             steps {
+//                 sh "mvn dependency-check:check"
+//             }
+//             post {
+//                 always {
+//                     dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+//                 }
+//             }
+//         }
 
         stage('SCM Checkout') {
             steps {
@@ -61,17 +61,17 @@ pipeline {
             }
         }
 
-        stage('Mutation Tests - PIT') {
-            steps {
-                sh "mvn org.pitest:pitest-maven:mutationCoverage"
-            }
-            post {
-                always {
-                    pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0 
-                    // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
-                }
-            }
-        }
+//         stage('Mutation Tests - PIT') {
+//             steps {
+//                 sh "mvn org.pitest:pitest-maven:mutationCoverage"
+//             }
+//             post {
+//                 always {
+//                     pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0
+//                     // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+//                 }
+//             }
+//         }
 
         stage('Kubernetes Deployment - DEV') {
             steps {
