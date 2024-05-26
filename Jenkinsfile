@@ -4,25 +4,25 @@ pipeline {
   stages {
 
     stage('Build Artifact') {
-                steps {
-                  sh "mvn clean package -DskipTests=true"
-                  archive 'target/*.jar' //so that they can be downloaded later
-                }
+      steps {
+        sh "mvn clean package -DskipTests=true"
+        archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true // Corrected archive command
+      }
     }
 
-    stage('maven version') {
+    stage('Maven Version') {
       steps {
         sh "mvn -v"
       }
     }
 
-    stage('docker version') {
+    stage('Docker Version') {
       steps {
         sh "docker -v"
       }
     }
 
-    stage('kubernetes version') {
+    stage('Kubernetes Version') {
       steps {
         withKubeConfig([credentialsId: 'kubeconfig']) {
           sh "kubectl version --short"
@@ -30,3 +30,4 @@ pipeline {
       }
     }
   }
+}
