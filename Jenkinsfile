@@ -1,5 +1,3 @@
-JenkinsFile
-
 pipeline {
     agent any
 
@@ -7,7 +5,7 @@ pipeline {
         stage('Build Artifact - Maven') {
             steps {
                 sh "mvn clean package -DskipTests=true"
-                archiveArtifacts 'target/*.jar'
+                archiveArtifacts artifacts: 'target/*.jar'
             }
         }
 
@@ -18,7 +16,7 @@ pipeline {
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'
-                    jacoco(execPattern: 'target/jacoco.exec')
+                    jacoco execPattern: 'target/jacoco.exec'
                 }
             }
         }
@@ -70,7 +68,7 @@ pipeline {
             post {
                 always {
                     pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0 
-                    //pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+                    // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
                 }
             }
         }
