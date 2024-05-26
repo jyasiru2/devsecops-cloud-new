@@ -32,35 +32,22 @@ pipeline {
             }
         }
 
-        node {
-          stage('SCM') {
-            checkout scm
-          }
-          stage('SonarQube Analysis') {
-            def mvn = tool 'Default Maven';
-            withSonarQubeEnv() {
-              sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Devseccloud-new -Dsonar.projectName='Devseccloud-new'"
+        stage('SCM Checkout') {
+            steps {
+                checkout scm
             }
-          }
         }
 
-//         stage('SCM Checkout') {
-//             steps {
-//                 checkout scm
-//             }
-//         }
-//
-//         stage('SonarQube Analysis') {
-//             steps {
-//                 script {
-// //                     def mvn = tool 'Default Maven';
-//                     withSonarQubeEnv(installationName: 'sonarqube') {
-// //                         sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=NumericApplication -Dsonar.projectName='NumericApplication' -Dmaven.clean.failOnError=false"
-//                         sh "./mvnw clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar"
-//                     }
-//                 }
-//             }
-//         }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def mvn = tool 'maven'
+                    withSonarQubeEnv() {
+                        sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Devseccloud-new -Dsonar.projectName='Devseccloud-new'"
+                    }
+                }
+            }
+        }
 
         stage('Docker Build and Push') {
             steps {
