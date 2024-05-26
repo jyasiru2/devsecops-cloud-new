@@ -21,16 +21,29 @@ pipeline {
             }
         }
 
-        stage('Vulnerability Scan - Dependency Check') {
-            steps {
-                sh "mvn dependency-check:check"
+//         stage('Vulnerability Scan - Dependency Check / Trivy Scan') {
+//             steps {
+//                 sh "mvn dependency-check:check"
+//             }
+//             post {
+//                 always {
+//                     dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+//                 }
+//             }
+//         }
+        stage('Vulnerability Scan - Dependency Check / Trivy Scan') {
+              steps {
+                parallel(
+                  "Dependency Scan": {
+                    sh "mvn dependency-check:check"
+                  },
+                  "Trivy Scan": {
+                    sh "bash trivy-docker-image-scan.sh"
+                  }
+                )
+              }
             }
-            post {
-                always {
-                    dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-                }
-            }
-        }
+
 
         stage('SCM Checkout') {
             steps {
