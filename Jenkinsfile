@@ -21,16 +21,16 @@ pipeline {
             }
         }
 
-//         stage('Vulnerability Scan - Dependency Check') {
-//             steps {
-//                 sh "mvn dependency-check:check"
-//             }
-//             post {
-//                 always {
-//                     dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-//                 }
-//             }
-//         }
+        // stage('Vulnerability Scan - Dependency Check') {
+        //     steps {
+        //         sh "mvn dependency-check:check"
+        //     }
+        //     post {
+        //         always {
+        //             dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+        //         }
+        //     }
+        // }
 
         stage('SCM Checkout') {
             steps {
@@ -49,27 +49,27 @@ pipeline {
         //     }
         // }
 
-//         stage('Docker Build and Push') {
-//             steps {
-//                    withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
-//                        sh 'printenv'
-//                        sh "docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."
-//                        sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"
-//                    }
-//             }
-//         }
+        stage('Docker Build and Push') {
+            steps {
+                withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
+                    sh 'printenv'
+                    sh "docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."
+                    sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"
+                }
+            }
+        }
 
-//         stage('Mutation Tests - PIT') {
-//             steps {
-//                 sh "mvn org.pitest:pitest-maven:mutationCoverage"
-//             }
-//             post {
-//                 always {
-//                     pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0
-//                     // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
-//                 }
-//             }
-//         }
+        // stage('Mutation Tests - PIT') {
+        //     steps {
+        //         sh "mvn org.pitest:pitest-maven:mutationCoverage"
+        //     }
+        //     post {
+        //         always {
+        //             pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0
+        //             // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+        //         }
+        //     }
+        // }
 
         stage('Kubernetes Deployment - DEV') {
             steps {
