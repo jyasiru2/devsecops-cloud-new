@@ -25,7 +25,7 @@ pipeline {
     stage('Kubernetes Version') {
       steps {
         withKubeConfig([credentialsId: 'kubeconfig']) {
-          sh "kubectl version --short"
+          sh "kubectl version "
         }
       }
     }
