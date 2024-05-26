@@ -41,7 +41,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def mvn = tool 'Default Maven';
+//                     def mvn = tool 'Default Maven';
                     withSonarQubeEnv(installationName: 'sonarqube') {
 //                         sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=NumericApplication -Dsonar.projectName='NumericApplication' -Dmaven.clean.failOnError=false"
                         sh "./mvnw clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar"
