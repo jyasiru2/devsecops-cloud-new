@@ -13,52 +13,75 @@ pipeline {
             steps {
                 sh "mvn test"
             }
+//             post {
+//                 always {
+//                     junit 'target/surefire-reports/*.xml'
+//                     jacoco execPattern: 'target/jacoco.exec'
+//                 }
+//             }
         }
 
         stage('Vulnerability Scan - Dependency Check') {
             steps {
                 sh "mvn dependency-check:check"
             }
+//             post {
+//                 always {
+//                     dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+//                 }
+//             }
         }
 
-        stage('Vulnerability Scan - Docker') {
-            steps {
-                parallel(
-                    "Dependency Scan": {
-                        sh "mvn dependency-check:check"
-                    },
-                    "Trivy Scan": {
-                        sh "bash trivy-docker-image-scan.sh"
-                    }
-                    // "OPA Conftest": {
-                    //     sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'
-                    // }
-                )
-            }
-        }
+//         node {
+//           stage('SCM') {
+//             checkout scm
+//           }
+//           stage('SonarQube Analysis') {
+//             def mvn = tool 'Default Maven';
+//             withSonarQubeEnv() {
+//               sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Devseccloud-new -Dsonar.projectName='Devseccloud-new'"
+//             }
+//           }
+//         }
 
-        stage('SCM Checkout') {
-            steps {
-                checkout scm
-            }
-        }
+//         stage('SCM Checkout') {
+//             steps {
+//                 checkout scm
+//             }
+//         }
+//
+//         stage('SonarQube Analysis') {
+//             steps {
+//                 script {
+// //                     def mvn = tool 'Default Maven';
+//                     withSonarQubeEnv(installationName: 'sonarqube') {
+// //                         sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=NumericApplication -Dsonar.projectName='NumericApplication' -Dmaven.clean.failOnError=false"
+//                         sh "./mvnw clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar"
+//                     }
+//                 }
+//             }
+//         }
 
-        stage('Docker Build and Push') {
-            steps {
-                script {
-                    withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
-                        sh 'printenv'
-                        sh "sudo docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."
-                        sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"
-                    }
-                }
-            }
-        }
+//         stage('Docker Build and Push') {
+//             steps {
+//                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
+//                     sh 'printenv'
+//                     sh "docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."
+//                     sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"
+//                 }
+//             }
+//         }
 
         stage('Mutation Tests - PIT') {
             steps {
                 sh "mvn org.pitest:pitest-maven:mutationCoverage"
             }
+//             post {
+//                 always {
+//                     pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0
+//                     // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+//                 }
+//             }
         }
 
         stage('Kubernetes Deployment - DEV') {
@@ -71,14 +94,91 @@ pipeline {
                 }
             }
         }
-    }
+        ```jsx
+        pipeline {
+            agent any
 
-    post {
-        always {
-            junit 'target/surefire-reports/*.xml'
-            jacoco execPattern: 'target/jacoco.exec'
-            dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-            pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0
+            stages {
+                stage('Build Artifact - Maven') {
+                    steps {
+                        sh "mvn clean package -DskipTests=true"
+                        archiveArtifacts 'target/*.jar'
+                    }
+                }
+
+                stage('Unit Tests - JUnit and Jacoco') {
+                    steps {
+                        sh "mvn test"
+                    }
+                }
+
+                stage('Vulnerability Scan - Dependency Check') {
+                    steps {
+                        sh "mvn dependency-check:check"
+                    }
+                }
+
+                stage('Vulnerability Scan - Docker') {
+                    steps {
+                        parallel(
+                            "Dependency Scan": {
+                                sh "mvn dependency-check:check"
+                            },
+                            "Trivy Scan": {
+                                sh "bash trivy-docker-image-scan.sh"
+                            },
+        //                     "OPA Conftest": {
+        //                         sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'
+        //                     }
+                        )
+                    }
+                }
+
+                stage('SCM Checkout') {
+                    steps {
+                        checkout scm
+                    }
+                }
+
+                stage('Docker Build and Push') {
+                    steps {
+                        script {
+                            withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
+                                sh 'printenv'
+                                sh "sudo docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."
+                                sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"
+                            }
+                        }
+                    }
+                }
+
+                stage('Mutation Tests - PIT') {
+                    steps {
+                        sh "mvn org.pitest:pitest-maven:mutationCoverage"
+                    }
+                }
+
+                stage('Kubernetes Deployment - DEV') {
+                    steps {
+                        script {
+                            withKubeConfig([credentialsId: 'kubeconfig']) {
+                                sh '''sed -i "s|yasiru1997/numeric-app2:PLACEHOLDER|yasiru1997/numeric-app2:${GIT_COMMIT}|g" k8s_deployment_service.yaml'''
+                                sh "kubectl apply -f k8s_deployment_service.yaml"
+                            }
+                        }
+                    }
+                }
+            }
+
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                    jacoco(execPattern: 'target/jacoco.exec')
+                    dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+                    pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0
+                }
+            }
         }
+
     }
 }
