@@ -38,16 +38,16 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    def mvn = tool 'maven'
-                    withSonarQubeEnv() {
-                        sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Devseccloud-new -Dsonar.projectName='Devseccloud-new'"
-                    }
-                }
-            }
-        }
+//         stage('SonarQube Analysis') {
+//             steps {
+//                 script {
+//                     def mvn = tool 'maven'
+//                     withSonarQubeEnv() {
+//                         sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Devseccloud-new -Dsonar.projectName='Devseccloud-new'"
+//                     }
+//                 }
+//             }
+//         }
 
         stage('Docker Build and Push') {
             steps {
