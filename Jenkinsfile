@@ -38,16 +38,16 @@ pipeline {
             }
         }
 
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         script {
-        //             def mvn = tool 'Default Maven';
-        //             withSonarQubeEnv() {
-        //                 sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=NumericApplication -Dsonar.projectName='NumericApplication' -Dmaven.clean.failOnError=false"
-        //             }
-        //         }
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def mvn = tool 'Default Maven';
+                    withSonarQubeEnv(installationName: 'sonarqube') {
+                        sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=NumericApplication -Dsonar.projectName='NumericApplication' -Dmaven.clean.failOnError=false"
+                    }
+                }
+            }
+        }
 
         stage('Docker Build and Push') {
             steps {
