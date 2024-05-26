@@ -5,7 +5,7 @@ pipeline {
         stage('Build Artifact - Maven') {
             steps {
                 sh "mvn clean package -DskipTests=true"
-                archiveArtifacts artifacts: 'target/*.jar'
+                archiveArtifacts 'target/*.jar'
             }
         }
 
