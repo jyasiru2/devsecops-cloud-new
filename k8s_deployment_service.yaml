@@ -1,37 +1,37 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1                                # Specifies the API version for the Deployment resource
+kind: Deployment                                   # Declares the resource type as Deployment
 metadata:
   labels:
-    app: devsecops
-  name: devsecops
+    app: devsecops      # Label key-value pair
+  name: devsecops       # Name of the Deployment
 spec:
-  replicas: 2
+  replicas: 2           # Number of pod replicas to run
   selector:
-    matchLabels:
-      app: devsecops
+    matchLabels:          # Label selector for the pods
+      app: devsecops     # Label key-value pair used for matching
   strategy: {}
-  template:
+  template:     # Template for the pod configuration
     metadata:
-      labels:
-        app: devsecops
-    spec:
-      containers:
-      - image: replace
-        name: devsecops-container
+      labels:        # Labels to identify the pods
+        app: devsecops   # Label key-value pair
+    spec:     # Specification of the pod's behavior
+      containers:        # List of containers to run in the pod
+      - image: replace    # Container image to use (to be replaced with the actual image name)
+        name: devsecops-container      # Name of the container
         securityContext:
-          runAsNonRoot: true
+          runAsNonRoot: true     # Ensures the container does not run as the root user
 ---
-apiVersion: v1
-kind: Service
+apiVersion: v1   # Specifies the API version for the Service resource
+kind: Service    # Declares the resource type as Service
 metadata:
   labels:
-    app: devsecops
-  name: devsecops-svc
-spec:
+    app: devsecops        # Label key-value pair
+  name: devsecops-svc     # Name of the Service
+spec:      # Specification of the desired state for the Service
   ports:
-  - port: 8080
+  - port: 8080     # Port that the Service will expose
     protocol: TCP
-    targetPort: 8080
+    targetPort: 8080  # Port on the container that the traffic will be directed to
   selector:
     app: devsecops
-  type: NodePort
+  type: NodePort         # Type of Service (NodePort allows external access to the Service)
