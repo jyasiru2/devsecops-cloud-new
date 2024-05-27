@@ -34,4 +34,4 @@ spec:      # Specification of the desired state for the Service
     targetPort: 8080  # Port on the container that the traffic will be directed to
   selector:
     app: devsecops
-  type: NodePort         # Type of Service (NodePort allows external access to the Service)
+  type: NodePort         # Type of Service (NodePort allows external access to the Service)/
