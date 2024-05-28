@@ -5,7 +5,7 @@ metadata:
     app: devsecops                                 # Label key-value pair
   name: devsecops                                  # Name of the Deployment
 spec:
-  replicas: 3                                      # Number of pod replicas to run
+  replicas: 1                                      # Number of pod replicas to run
   selector:
     matchLabels:                                   # Label selector for the pods
       app: devsecops                               # Label key-value pair used for matching
