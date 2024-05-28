@@ -20,6 +20,12 @@ spec:
         name: devsecops-container      # Name of the container
         securityContext:
           runAsNonRoot: true     # Ensures the container does not run as the root user
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+
+
 ---
 apiVersion: v1   # Specifies the API version for the Service resource
 kind: Service    # Declares the resource type as Service
