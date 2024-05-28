@@ -16,7 +16,7 @@ spec:
         app: devsecops   # Label key-value pair
     spec:     # Specification of the pod's behavior
       containers:        # List of containers to run in the pod
-      - image: yasiru1997/numeric-app2${GIT_COMMIT}    # Container image to use (to be replaced with the actual image name)
+      - image: yasiru1997/numeric-app2:${GIT_COMMIT}    # Container image to use (to be replaced with the actual image name)
         name: devsecops-container      # Name of the container
         securityContext:
           runAsNonRoot: true     # Ensures the container does not run as the root user
