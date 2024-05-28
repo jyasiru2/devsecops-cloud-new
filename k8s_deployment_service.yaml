@@ -2,24 +2,26 @@ apiVersion: apps/v1                                # Specifies the API version f
 kind: Deployment                                   # Declares the resource type as Deployment
 metadata:
   labels:
-    app: devsecops      # Label key-value pair
-  name: devsecops       # Name of the Deployment
+    app: devsecops                                 # Label key-value pair
+  name: devsecops                                  # Name of the Deployment
 spec:
-  replicas: 3           # Number of pod replicas to run
+  replicas: 3                                      # Number of pod replicas to run
   selector:
-    matchLabels:          # Label selector for the pods
-      app: devsecops     # Label key-value pair used for matching
+    matchLabels:                                   # Label selector for the pods
+      app: devsecops                               # Label key-value pair used for matching
   strategy: {}
-  template:     # Template for the pod configuration
+  template:                                        # Template for the pod configuration
     metadata:
-      labels:        # Labels to identify the pods
-        app: devsecops   # Label key-value pair
-    spec:     # Specification of the pod's behavior
-      containers:        # List of containers to run in the pod
-      - image: replace    # Container image to use (to be replaced with the actual image name)
-        name: devsecops-container      # Name of the container
+      labels:                                      # Labels to identify the pods
+        app: devsecops                             # Label key-value pair
+    spec:                                          # Specification of the pod's behavior
+      containers:                                  # List of containers to run in the pod
+      - image: replace                             # Container image to use (to be replaced with the actual image name)
+        name: devsecops-container                  # Name of the container
         securityContext:
-          runAsNonRoot: true     # Ensures the container does not run as the root user
+          runAsNonRoot: true                       # Ensures the container does not run as the root user
+          runAsUser: 100
+
       tolerations:
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
@@ -27,6 +29,9 @@ spec:
 
 
 ---
+
+
+
 apiVersion: v1   # Specifies the API version for the Service resource
 kind: Service    # Declares the resource type as Service
 metadata:
