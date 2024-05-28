@@ -87,7 +87,7 @@ pipeline {
             steps {
                 script {
                     withKubeConfig([credentialsId: 'kubeconfig']) {  // Use Kubernetes configuration for deployment
-                        sh '''sed -i "s|yasiru1997/numeric-app2:${GIT_COMMIT}|yasiru1997/numeric-app2:${GIT_COMMIT}|g" k8s_deployment_service.yaml'''  // Replace placeholder with actual Docker image tag
+                        sh '''sed -i "s|replace|yasiru1997/numeric-app2:${GIT_COMMIT}|g" k8s_deployment_service.yaml'''  // Replace placeholder with actual Docker image tag
                         sh "kubectl apply -f k8s_deployment_service.yaml"  // Apply the Kubernetes deployment file to deploy the application
                     }
                 }
