@@ -21,7 +21,37 @@ pipeline {
             }
         }
 
-        stage('Vulnerability Scan - Dependency Check / Trivy Scan') {  // Stage to perform vulnerability scans
+        stage('Mutation Tests - PIT') {  // Stage to run mutation tests using PIT
+            steps {
+                sh "mvn org.pitest:pitest-maven:mutationCoverage"  // Run mutation tests
+            }
+            post {
+                always {
+                    pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0  // Ensure mutation coverage meets minimum threshold
+                    // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'  //  Specify mutation report location
+                }
+            }
+        }
+
+        stage('SCM Checkout') {  // Stage to check out the source code from the source control system
+            steps {
+                checkout scm  // Check out the latest code from the configured SCM
+            }
+        }
+
+        // Stage for SonarQube analysis is commented out
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             def mvn = tool 'Default Maven';
+        //             withSonarQubeEnv(installationName: 'sonarqube') {
+        //                 sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=NumericApplication -Dsonar.projectName='NumericApplication' -Dmaven.clean.failOnError=false"
+        //             }
+        //         }
+        //     }
+        // }
+
+        stage('Vulnerability Scan - Docker') {  // Stage to perform vulnerability scans
             steps {
                 parallel(  // Run the scans in parallel to save time
                   "Dependency Scan": {  // Dependency scan using OWASP Dependency Check
@@ -34,26 +64,8 @@ pipeline {
                     sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'  // Test Dockerfile against security policies
                   }
                 )
-              }
-            }
-
-        stage('SCM Checkout') {  // Stage to check out the source code from the source control system
-            steps {
-                checkout scm  // Check out the latest code from the configured SCM
             }
         }
-
-        // Stage for SonarQube analysis is commented out
-//         stage('SonarQube Analysis') {
-//             steps {
-//                 script {
-//                     def mvn = tool 'Default Maven';
-//                     withSonarQubeEnv(installationName: 'sonarqube') {
-//                         sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=NumericApplication -Dsonar.projectName='NumericApplication' -Dmaven.clean.failOnError=false"
-//                     }
-//                 }
-//             }
-//         }
 
         stage('Docker Build and Push') {  // Stage to build and push Docker image
             steps {
@@ -61,18 +73,6 @@ pipeline {
                     sh 'printenv'  // Print environment variables for debugging
                     sh "sudo docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."  // Build Docker image with the current Git commit ID
                     sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"  // Push the Docker image to Docker Hub
-                }
-            }
-        }
-
-        stage('Mutation Tests - PIT') {  // Stage to run mutation tests using PIT
-            steps {
-                sh "mvn org.pitest:pitest-maven:mutationCoverage"  // Run mutation tests
-            }
-            post {
-                always {
-                    pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0  // Ensure mutation coverage meets minimum threshold
-                    // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'  //  Specify mutation report location
                 }
             }
         }
