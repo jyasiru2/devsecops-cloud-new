@@ -72,7 +72,7 @@ pipeline {
             post {
                 always {
                     pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0  // Ensure mutation coverage meets minimum threshold
-                    // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'  // (Commented out) Specify mutation report location
+                    // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'  //  Specify mutation report location
                 }
             }
         }

@@ -502,3 +502,6 @@ spec:
   selector:
     app: kube-scan
   type: ClusterIP
+
+
+
