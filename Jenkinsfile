@@ -72,26 +72,26 @@ pipeline {
 
 
 
-//         stage('Docker Build and Push') {  // Stage to build and push Docker image
-//             steps {
-//                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {  // Use Docker Hub credentials to authenticate
-//                     sh 'printenv'  // Print environment variables for debugging
-//                     sh "docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."  // Build Docker image with the current Git commit ID
-//                     sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"  // Push the Docker image to Docker Hub
-//                 }
-//             }
-//         }
-
         stage('Docker Build and Push') {  // Stage to build and push Docker image
             steps {
                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {  // Use Docker Hub credentials to authenticate
-                    sh 'docker buildx create '  // Create and use a new Buildx builder instance
-                    sh 'docker buildx inspect --bootstrap'  // Bootstrap the builder
                     sh 'printenv'  // Print environment variables for debugging
-                    sh "docker buildx build --platform linux/amd64,linux/arm64 -t yasiru1997/numeric-app2:${GIT_COMMIT} --push ."  // Build and push Docker image with Buildx
+                    sh "docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."  // Build Docker image with the current Git commit ID
+                    sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"  // Push the Docker image to Docker Hub
                 }
             }
         }
+
+//         stage('Docker Build and Push') {  // Stage to build and push Docker image
+//             steps {
+//                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {  // Use Docker Hub credentials to authenticate
+//                     sh 'docker buildx create '  // Create and use a new Buildx builder instance
+//                     sh 'docker buildx inspect --bootstrap'  // Bootstrap the builder
+//                     sh 'printenv'  // Print environment variables for debugging
+//                     sh "docker buildx build --platform linux/amd64,linux/arm64 -t yasiru1997/numeric-app2:${GIT_COMMIT} --push ."  // Build and push Docker image with Buildx
+//                 }
+//             }
+//         }
 
 
 
