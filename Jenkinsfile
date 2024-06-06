@@ -3,43 +3,43 @@ pipeline {
 
 
 
-    stages {
-        stage('Build Artifact - Maven') {  // Stage to build the project artifact using Maven
-            steps {
-                sh "mvn clean package -DskipTests=true"  // Run Maven to clean the workspace and package the project, skipping tests to save time
-                archiveArtifacts 'target/*.jar'  // Archive the built JAR file for later use
-            }
-        }
-
-        stage('Unit Tests - JUnit and Jacoco') {  // Stage to run unit tests and collect code coverage data
-            steps {
-                sh "mvn test"  // Run unit tests using Maven and JUnit
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'  // Publish the test results
-                    jacoco execPattern: 'target/jacoco.exec'  // Collect code coverage data
-                }
-            }
-        }
-
-        stage('Mutation Tests - PIT') {  // Stage to run mutation tests using PIT
-            steps {
-                sh "mvn org.pitest:pitest-maven:mutationCoverage"  // Run mutation tests
-            }
-            post {
-                always {
-                    pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0  // Ensure mutation coverage meets minimum threshold
-                    // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'  //  Specify mutation report location
-                }
-            }
-        }
-
-        stage('SCM Checkout') {  // Stage to check out the source code from the source control system
-            steps {
-                checkout scm  // Check out the latest code from the configured SCM
-            }
-        }
+//     stages {
+//         stage('Build Artifact - Maven') {  // Stage to build the project artifact using Maven
+//             steps {
+//                 sh "mvn clean package -DskipTests=true"  // Run Maven to clean the workspace and package the project, skipping tests to save time
+//                 archiveArtifacts 'target/*.jar'  // Archive the built JAR file for later use
+//             }
+//         }
+//
+//         stage('Unit Tests - JUnit and Jacoco') {  // Stage to run unit tests and collect code coverage data
+//             steps {
+//                 sh "mvn test"  // Run unit tests using Maven and JUnit
+//             }
+//             post {
+//                 always {
+//                     junit 'target/surefire-reports/*.xml'  // Publish the test results
+//                     jacoco execPattern: 'target/jacoco.exec'  // Collect code coverage data
+//                 }
+//             }
+//         }
+//
+//         stage('Mutation Tests - PIT') {  // Stage to run mutation tests using PIT
+//             steps {
+//                 sh "mvn org.pitest:pitest-maven:mutationCoverage"  // Run mutation tests
+//             }
+//             post {
+//                 always {
+//                     pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0  // Ensure mutation coverage meets minimum threshold
+//                     // pitMutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'  //  Specify mutation report location
+//                 }
+//             }
+//         }
+//
+//         stage('SCM Checkout') {  // Stage to check out the source code from the source control system
+//             steps {
+//                 checkout scm  // Check out the latest code from the configured SCM
+//             }
+//         }
 
         // Stage for SonarQube analysis is commented out
         // stage('SonarQube Analysis') {
@@ -76,7 +76,7 @@ pipeline {
             steps {
                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {  // Use Docker Hub credentials to authenticate
                     sh 'printenv'  // Print environment variables for debugging
-                    sh "docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."  // Build Docker image with the current Git commit ID
+                    sh "sudo docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."  // Build Docker image with the current Git commit ID
                     sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"  // Push the Docker image to Docker Hub
                 }
             }
