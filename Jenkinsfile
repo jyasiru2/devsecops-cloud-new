@@ -85,13 +85,14 @@ pipeline {
         stage('Docker Build and Push') {  // Stage to build and push Docker image
             steps {
                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {  // Use Docker Hub credentials to authenticate
-                    sh 'docker buildx create --name mybuilder --use'  // Create and use a new Buildx builder instance
+                    sh 'docker buildx create --use'  // Create and use a new Buildx builder instance
                     sh 'docker buildx inspect --bootstrap'  // Bootstrap the builder
                     sh 'printenv'  // Print environment variables for debugging
                     sh "docker buildx build --platform linux/amd64,linux/arm64 -t yasiru1997/numeric-app2:${GIT_COMMIT} --push ."  // Build and push Docker image with Buildx
                 }
             }
         }
+
 
 
 
