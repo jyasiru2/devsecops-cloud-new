@@ -76,7 +76,7 @@ pipeline {
             steps {
                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {  // Use Docker Hub credentials to authenticate
                     sh 'printenv'  // Print environment variables for debugging
-                    sh "sudo docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."  // Build Docker image with the current Git commit ID
+                    sh "docker build -t yasiru1997/numeric-app2:${GIT_COMMIT} ."  // Build Docker image with the current Git commit ID
                     sh "docker push yasiru1997/numeric-app2:${GIT_COMMIT}"  // Push the Docker image to Docker Hub
                 }
             }
