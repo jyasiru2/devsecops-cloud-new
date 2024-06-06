@@ -1,8 +1,6 @@
 pipeline {
     agent any  // Use any available agent to run the pipeline
 
-
-
     stages {
         stage('Build Artifact - Maven') {  // Stage to build the project artifact using Maven
             steps {
@@ -59,18 +57,15 @@ pipeline {
                   "Dependency Scan": {  // Dependency scan using OWASP Dependency Check
                     sh "mvn dependency-check:check"  // Check for vulnerabilities in project dependencies
                   },
-//                   "Trivy Scan": {  // Trivy scan for Docker images
-//                     sh "bash trivy-docker-image-scan.sh"  // Run Trivy scan script to check for vulnerabilities
-                  }
+                  // "Trivy Scan": {  // Trivy scan for Docker images
+                  //   sh "bash trivy-docker-image-scan.sh"  // Run Trivy scan script to check for vulnerabilities
+                  // },
                   "OPA Conftest": {  // OPA Conftest to check Dockerfile security policies
                     sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'  // Test Dockerfile against security policies
                   }
                 )
             }
         }
-
-
-
 
         stage('Docker Build and Push') {  // Stage to build and push Docker image
             steps {
@@ -82,19 +77,16 @@ pipeline {
             }
         }
 
-//         stage('Docker Build and Push') {  // Stage to build and push Docker image
-//             steps {
-//                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {  // Use Docker Hub credentials to authenticate
-//                     sh 'docker buildx create '  // Create and use a new Buildx builder instance
-//                     sh 'docker buildx inspect --bootstrap'  // Bootstrap the builder
-//                     sh 'printenv'  // Print environment variables for debugging
-//                     sh "docker buildx build --platform linux/amd64,linux/arm64 -t yasiru1997/numeric-app2:${GIT_COMMIT} --push ."  // Build and push Docker image with Buildx
-//                 }
-//             }
-//         }
-
-
-
+        // stage('Docker Build and Push') {  // Stage to build and push Docker image
+        //     steps {
+        //         withDockerRegistry([credentialsId: "docker-hub", url: ""]) {  // Use Docker Hub credentials to authenticate
+        //             sh 'docker buildx create '  // Create and use a new Buildx builder instance
+        //             sh 'docker buildx inspect --bootstrap'  // Bootstrap the builder
+        //             sh 'printenv'  // Print environment variables for debugging
+        //             sh "docker buildx build --platform linux/amd64,linux/arm64 -t yasiru1997/numeric-app2:${GIT_COMMIT} --push ."  // Build and push Docker image with Buildx
+        //         }
+        //     }
+        // }
 
         stage('Vulnerability Scan - Kubernetes') {  // Stage to perform security checks on Kubernetes configurations
             steps {
