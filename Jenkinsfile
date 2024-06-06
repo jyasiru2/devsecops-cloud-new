@@ -61,7 +61,7 @@ pipeline {
                   },
 //                   "Trivy Scan": {  // Trivy scan for Docker images
 //                     sh "bash trivy-docker-image-scan.sh"  // Run Trivy scan script to check for vulnerabilities
-                  },
+                  }
                   "OPA Conftest": {  // OPA Conftest to check Dockerfile security policies
                     sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'  // Test Dockerfile against security policies
                   }
