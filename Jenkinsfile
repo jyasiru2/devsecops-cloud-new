@@ -3,7 +3,7 @@ pipeline {
 
 
 
-//     stages {
+    stages {
 //         stage('Build Artifact - Maven') {  // Stage to build the project artifact using Maven
 //             steps {
 //                 sh "mvn clean package -DskipTests=true"  // Run Maven to clean the workspace and package the project, skipping tests to save time
