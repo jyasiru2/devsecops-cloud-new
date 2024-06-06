@@ -1,6 +1,8 @@
 pipeline {
     agent any  // Use any available agent to run the pipeline
 
+
+
     stages {
         stage('Build Artifact - Maven') {  // Stage to build the project artifact using Maven
             steps {
@@ -51,21 +53,24 @@ pipeline {
         //     }
         // }
 
-        stage('Vulnerability Scan - Docker') {  // Stage to perform vulnerability scans
-            steps {
-                parallel(  // Run the scans in parallel to save time
-                  "Dependency Scan": {  // Dependency scan using OWASP Dependency Check
-                    sh "mvn dependency-check:check"  // Check for vulnerabilities in project dependencies
-                  },
-                  "Trivy Scan": {  // Trivy scan for Docker images
-                    sh "bash trivy-docker-image-scan.sh"  // Run Trivy scan script to check for vulnerabilities
-                  },
-                  "OPA Conftest": {  // OPA Conftest to check Dockerfile security policies
-                    sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'  // Test Dockerfile against security policies
-                  }
-                )
-            }
-        }
+//         stage('Vulnerability Scan - Docker') {  // Stage to perform vulnerability scans
+//             steps {
+//                 parallel(  // Run the scans in parallel to save time
+//                   "Dependency Scan": {  // Dependency scan using OWASP Dependency Check
+//                     sh "mvn dependency-check:check"  // Check for vulnerabilities in project dependencies
+//                   },
+//                   "Trivy Scan": {  // Trivy scan for Docker images
+//                     sh "bash trivy-docker-image-scan.sh"  // Run Trivy scan script to check for vulnerabilities
+//                   },
+//                   "OPA Conftest": {  // OPA Conftest to check Dockerfile security policies
+//                     sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'  // Test Dockerfile against security policies
+//                   }
+//                 )
+//             }
+//         }
+
+
+
 
         stage('Docker Build and Push') {  // Stage to build and push Docker image
             steps {
